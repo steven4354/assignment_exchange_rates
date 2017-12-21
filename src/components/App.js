@@ -43,10 +43,14 @@ const SelectCurrency = ({ratesObj, callback}) => {
     <form name="currencyForm" onSubmit={callback}>
       <select name="chosenCurrency" name="currencyForm">
         {arrOfKeys.map(key => {
-          return <option value={key} key={key}>{key}</option>;
+          return (
+            <option value={key} key={key}>
+              {key}
+            </option>
+          );
         })}
       </select>
-      <input text="submit" type="submit"/>
+      <input text="submit" type="submit" />
     </form>
   );
 };
@@ -90,53 +94,35 @@ class App extends Component {
     const form = e.target;
     const body = serialize(form, {hash: true});
     console.log(form);
-    console.log(body);
 
-    // // Create headers to set the content type to json
-    // const headers = new Headers();
-    // headers.append("Content-Type", "application/json");
-    //
-    // // Set options, and stringify the body to JSON
-    // const options = {
-    //   headers,
-    //   method: "POST",
-    //   body: JSON.stringify(body)
-    // };
-    //
-    // // Before performing the fetch, set isFetching to true
-    // this.setState({isFetching: true});
-    //
-    // fetch("https://reqres.in/api/users?delay=3", options)
-    //   .then(response => {
-    //     // If response not okay, throw an error
-    //     if (!response.ok) {
-    //       throw new Error(`${response.status} ${response.statusText}`);
-    //     }
-    //
-    //     // Otherwise, extract the response into json
-    //     return response.json();
-    //   })
-    //   .then(json => {
-    //     // Update the user list and isFetching.
-    //     // Reset the form in a callback after state is set.
-    //     this.setState(
-    //       {
-    //         isFetching: false,
-    //         users: [...this.state.users, json]
-    //       },
-    //       () => {
-    //         form.reset();
-    //       }
-    //     );
-    //   })
-    //   .catch(error => {
-    //     // Set error in state & log to console
-    //     console.log(error);
-    //     this.setState({
-    //       isFetching: false,
-    //       error
-    //     });
-    //   });
+    // Create headers to set the content type to json
+    const headers = new Headers();
+    headers.append("Content-Type", "application/json");
+
+    // Set options, and stringify the body to JSON
+    const options = {
+      headers,
+      method: "GET"
+    };
+
+    // Before performing the fetch, set isFetching to true
+    this.setState({isFetching: true});
+
+    fetch(`https://api.fixer.io/latest?base=${form.currencyForm}`, options)
+      .then(response => {
+        // If response not okay, throw an error
+        if (!response.ok) {
+          throw new Error(`${response.status} ${response.statusText}`);
+        }
+
+        // Otherwise, extract the response into json
+        return response.json();
+      })
+      .then(json =>
+        this.setState({
+          ratesObj: json
+        })
+      );
   };
 
   render() {
